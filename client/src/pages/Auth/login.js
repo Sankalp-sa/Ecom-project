@@ -5,50 +5,50 @@ import toast  from "react-hot-toast";
 import {useNavigate , useLocation} from "react-router-dom";
 import { useAuth } from '../../context/auth';
 
-export default function Login() {
+export default function ForgotPass() {
 
-const {auth, setAuth} = useAuth();
-const [email, setEmail] = useState("");
-const [password, setPassword] = useState("");
-
-const navigate = useNavigate();
-const location = useLocation();
-
-async function handleLoginSubmit(e) {
-    e.preventDefault();
-    const user = { email, password };
-
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_API}/api/v1/auth/login`,
-        user
-      );
-      if(res && res.data.success){
-        console.log(res)
-        setAuth({
-          ...auth,
-          user: res.data.user,
-          token: res.data.token,
-        });
-        localStorage.setItem("auth", JSON.stringify(res.data));
-        alert(res.data.message);
-        navigate(location.state || "/home");
-      }
-      else{
-        toast.error(res.data.message);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error("Something went worng");
+    const {auth, setAuth} = useAuth();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    
+    const navigate = useNavigate();
+    const location = useLocation();
+    
+    async function handleLoginSubmit(e) {
+        e.preventDefault();
+        const user = { email, password };
+    
+        try {
+          const res = await axios.post(
+            `${process.env.REACT_APP_API}/api/v1/auth/login`,
+            user
+          );
+          if(res && res.data.success){
+            console.log(res)
+            setAuth({
+              ...auth,
+              user: res.data.user,
+              token: res.data.token,
+            });
+            localStorage.setItem("auth", JSON.stringify(res.data));
+            alert(res.data.message);
+            navigate(location.state || "/home");
+          }
+          else{
+            toast.error(res.data.message);
+          }
+        } catch (error) {
+          console.log(error);
+          toast.error("Something went worng");
+        }
+    
+        setEmail("");
+        setPassword("");
+       
     }
 
-    setEmail("");
-    setPassword("");
-   
-}
-
   return (
-    <Layout>
+    <Layout title={"Forgot password shop it"}>
         <div className="register">
         <form style={{width: "500px"}}>
           <div id="regiterDiv">
@@ -76,16 +76,27 @@ async function handleLoginSubmit(e) {
                 required
               />
             </div>
+
+            <div className="mb-3">
+            <button
+              onClick={() => navigate("/forgot-password")}
+              type="submit"
+              className="btn btn-danger btn-lg w-100"
+            >
+              Forgot Password
+            </button>
+            </div>
+            
             <button
               onClick={handleLoginSubmit}
               type="submit"
-              className="btn btn-danger btn-lg"
+              className="btn btn-danger btn-lg w-100"
             >
               Submit
             </button>
           </div>
         </form>
-      </div>
+      </div> 
     </Layout>
   )
 }

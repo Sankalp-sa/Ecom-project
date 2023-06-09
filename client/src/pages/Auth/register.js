@@ -10,12 +10,13 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
+  const [answer, setAnswer] = useState("");
 
   const navigate = useNavigate();
 
   const handleRegisterSubmit = async (e) => {
     e.preventDefault();
-    const user = { name, email, password, phone, address };
+    const user = { name, email, password, phone, address, answer };
 
     try {
       const res = await axios.post(
@@ -48,62 +49,62 @@ export default function Register() {
         <form style={{width: "500px"}}>
           <div id="regiterDiv">
             <div className="mb-3">
-              <label htmlFor="exampleInputName" className="form-label">
-                Name
-              </label>
               <input
                 type="text"
                 className="form-control"
                 onChange={(e) => setName(e.target.value)}
                 value={name}
+                placeholder="Name"
                 required
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="exampleInputName" className="form-label">
-                Email
-              </label>
               <input
                 type="email"
                 className="form-control"
                 onChange={(e) => setEmail(e.target.value)}
                 value={email}
+                placeholder="Email"
                 required
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="exampleInputPassword1" className="form-label">
-                Password
-              </label>
               <input
                 type="password"
                 className="form-control"
                 onChange={(e) => setPassword(e.target.value)}
                 value={password}
+                placeholder="Password"
                 required
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="exampleInputName" className="form-label">
-                Phone
-              </label>
               <input
                 type="phone"
                 className="form-control"
                 onChange={(e) => setPhone(e.target.value)}
                 value={phone}
+                placeholder="Phone"
                 required
               />
             </div>
             <div className="mb-3">
-              <label htmlFor="exampleInputName" className="form-label">
-                Address
-              </label>
               <input
                 type="address"
                 className="form-control"
                 onChange={(e) => setAddress(e.target.value)}
                 value={address}
+                placeholder="Address"
+                required
+              />
+            </div>
+            <div className="mb-3">
+              <input
+                type="text"
+                className="form-control"
+                onChange={(e) => setAnswer(e.target.value)}
+                value={answer}
+                placeholder="What is your favourite sport?"
                 required
               />
             </div>
