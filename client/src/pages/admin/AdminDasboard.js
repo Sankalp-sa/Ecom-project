@@ -1,10 +1,9 @@
 import React from "react";
+import Layout from "../../components/Layout/layout";
+import AdminMenu from "../../components/Layout/AdminMenu";
+import { useAuth } from "../../context/auth";
 
-import Layout from "../../components/Layout/layout.js";
-import UserMenu from "../../components/Layout/UserMenu.js";
-import { useAuth } from "../../context/auth.js";
-
-export default function Dashborad() {
+export default function AdminDasboard() {
   const { auth } = useAuth();
 
   return (
@@ -12,15 +11,14 @@ export default function Dashborad() {
       <div className="container-fluid m-3 p-3">
         <div className="row">
           <div className="col-md-3">
-            <UserMenu />
+            <AdminMenu />
           </div>
           <div className="col-md-9">
             <div className="card">
               <div className="card-body">
-                <h5 className="card-title">User Details</h5>
+                <h5 className="card-title">Admin Details</h5>
                 <p className="card-text">Name: {auth?.user?.name}</p>
                 <p className="card-text">Email: {auth?.user?.email}</p>
-                <p className="card-text">Address: {auth?.user?.address}</p>
               </div>
             </div>
           </div>

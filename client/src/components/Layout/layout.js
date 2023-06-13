@@ -6,7 +6,8 @@ import { Helmet } from "react-helmet";
 import { Toaster } from 'react-hot-toast';
 
 
-export default function layout({ children, title, description, keywords, author }) {
+export default function Layout({ children, title, description, keywords, author }) {
+
   return (
     <div>
       <Helmet>
@@ -25,7 +26,7 @@ export default function layout({ children, title, description, keywords, author 
   );
 }
 
-layout.defaultProps = {
+Layout.defaultProps = {
   title: "Welcome to Shop it",
   description: "We sell the best products for cheap",
   keywords: "electronics, buy electronics, cheap electronics",
