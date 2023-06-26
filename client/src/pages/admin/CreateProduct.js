@@ -73,7 +73,7 @@ export default function CreateProduct() {
         setCategory("");
         setQuantity("");
         setShipping("");
-        navigate("/admin/products");
+        navigate("/dashboard/admin/products");
       }
       else{
         toast.error(`Error in creating product`);
@@ -92,7 +92,7 @@ export default function CreateProduct() {
           <div className="col-md-2 py-5 p-0 m-0 bg-danger">
             <AdminMenu />
           </div>
-          <div className="col-md-9" style={{ padding: "2% 15%" }}>
+          <div className="col-md-10" style={{ padding: "2% 17%" }}>
             <h1>Create Product</h1>
           <form onSubmit={handleCreateProduct}>
             <div>

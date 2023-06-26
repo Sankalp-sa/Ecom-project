@@ -1,5 +1,5 @@
 import express from "express";
-import { UpdateProductController, createProductController, deleteProductController, getAllProductsController, getProductPhotoController, getSingleProductsController } from "../controllers/productController.js";
+import { UpdateProductController, createProductController, deleteProductController, getAllProductsController, getProductPhotoController, getSingleProductsController, productCountController, productFilterController, productPageController, searchProductController } from "../controllers/productController.js";
 import ExpressFormidable from "express-formidable";
 import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
 
@@ -16,7 +16,7 @@ router.post(
   createProductController
 );
 
-// Update product || method: PUT
+// Update product || method: PUT  
 router.put(
     "/update-product/:pid",
     requireSignIn,
@@ -36,5 +36,18 @@ router.get("/get-product-photo/:pid", getProductPhotoController);
 
 // delete product || method: DELETE
 router.delete("/delete-product/:pid", requireSignIn, isAdmin, deleteProductController);
+
+// product count || method: GET
+router.get("/product-count", productCountController);
+
+// product per page || method: GET
+router.post("/product-list/:page", productPageController);
+
+// Search product || method: get
+router.get("/search-product/:keyword", searchProductController);
+
+// fitler product || method: get
+router.post("/filter-product", productFilterController);
+
 
 export default router;

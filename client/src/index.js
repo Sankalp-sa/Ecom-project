@@ -5,6 +5,7 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 import { AuthProvider } from "./context/auth";
+import {SearchProvider} from "./context/search";
 
 import { BrowserRouter } from "react-router-dom";
 import 'antd/dist/reset.css';
@@ -13,9 +14,11 @@ import 'antd/dist/reset.css';
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <AuthProvider>
+    <SearchProvider>
     <BrowserRouter>
       <App />
     </BrowserRouter>
+    </SearchProvider>
   </AuthProvider>
 );
 

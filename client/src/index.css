@@ -68,6 +68,13 @@
   ); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
+/* Product */
+
+.product-card-link{
+  text-decoration: none !important;
+  color: black !important;
+}
+
 /* 404 page not found */
 
 #mainPnf{

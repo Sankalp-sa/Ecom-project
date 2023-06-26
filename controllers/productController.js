@@ -6,9 +6,8 @@ import fs from "fs";
 
 export const createProductController = async (req, res) => {
   try {
-
-    console.log(req.fields)
-    console.log(req.files)
+    console.log(req.fields);
+    console.log(req.files);
     const { name, description, price, category, quantity } = req.fields;
     const { photo } = req.files;
 
@@ -151,9 +150,8 @@ export const getProductPhotoController = async (req, res) => {
 export const deleteProductController = async (req, res) => {
   try {
     const { pid } = req.params;
-    const product = await productModel
-      .findOneAndDelete(pid)
-      .select("-photo");
+    console.log(pid);
+    const product = await productModel.findByIdAndDelete(pid).select("-photo");
     res.status(200).send({
       success: true,
       message: "Product deleted successfully",
@@ -235,3 +233,162 @@ export const UpdateProductController = async (req, res) => {
     }
   }
 };
+
+// product cnt controller
+
+export const productCountController = async (req, res) => {
+  try {
+    const total = await productModel.find({}).estimatedDocumentCount();
+
+    res.status(200).send({
+      success: true,
+      message: "Total product count",
+      total,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in getting product count",
+    });
+  }
+};
+
+// product page controller
+
+export const productPageController = async (req, res) => {
+  try {
+
+    const {checked, radio, keyword} = req.body;
+
+    let arg = {};
+
+    console.log(checked)
+    console.log(radio)
+
+    if(checked.length > 0){
+      arg.category = checked;
+    }
+
+    if(radio.length > 0){
+      arg.price = {
+        $gte: radio[0],
+        $lte: radio[1]
+      }
+    }
+
+    console.log(keyword)
+
+    if(keyword.length > 0){
+      arg.$or = [
+        {
+          name: {$regex: keyword, $options: 'i'},
+          description: {$regex: keyword, $options: 'i'},
+        }
+      ]
+    }
+
+
+    const PAGE_SIZE = 6;
+    const pageNumber = req.params.page ? req.params.page : 1;
+
+    const skipAmount = (pageNumber - 1) * PAGE_SIZE;
+
+    const products = await productModel
+      .find(arg)
+      .select("-photo")
+      .populate("category")
+      .skip(skipAmount)
+      .limit(PAGE_SIZE)
+      .sort({ createdAt: -1 });
+
+      console.log(products)
+
+    res.status(200).send({
+      success: true,
+      message: "Product page",
+      products,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in getting product page",
+    });
+  }
+};
+
+// search product controller
+
+export const searchProductController = async (req, res) => {
+
+  try {
+
+    const { keyword } = req.params;
+
+    const products = await productModel.find({ 
+      $or: [
+        {
+          name: {$regex: keyword, $options: 'i'},
+          description: {$regex: keyword, $options: 'i'},
+        }
+      ]
+     }).select("-photo").populate("category");
+
+    res.status(200).send({
+      success: true,
+      message: "Search product",
+      products
+    });
+
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in searching product",
+      error
+    });
+
+  }
+}
+
+// product filter controller
+
+export const productFilterController = async (req, res) => {
+
+  try {
+
+    const {checked, radio, keyword} = req.body;
+
+    let arg = {};
+
+    if(checked.length > 0){
+      arg.category = checked;
+    }
+
+    if(radio.length){
+      arg.price = {
+        $gte: radio[0],
+        $lte: radio[1]
+      }
+    }
+
+    const products = await productModel.find(arg).select("-photo").populate("category");
+    res.status(200).send({
+      success: true,
+      message: "Filter product",
+      products
+    });
+    
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in filtering product",
+      error
+    });
+
+  }
+}
