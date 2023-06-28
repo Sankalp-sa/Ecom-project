@@ -258,36 +258,34 @@ export const productCountController = async (req, res) => {
 
 export const productPageController = async (req, res) => {
   try {
-
-    const {checked, radio, keyword} = req.body;
+    const { checked, radio, keyword } = req.body;
 
     let arg = {};
 
-    console.log(checked)
-    console.log(radio)
+    console.log(checked);
+    console.log(radio);
 
-    if(checked.length > 0){
+    if (checked.length > 0) {
       arg.category = checked;
     }
 
-    if(radio.length > 0){
+    if (radio.length > 0) {
       arg.price = {
         $gte: radio[0],
-        $lte: radio[1]
-      }
+        $lte: radio[1],
+      };
     }
 
-    console.log(keyword)
+    console.log(keyword);
 
-    if(keyword.length > 0){
+    if (keyword.length > 0) {
       arg.$or = [
         {
-          name: {$regex: keyword, $options: 'i'},
-          description: {$regex: keyword, $options: 'i'},
-        }
-      ]
+          name: { $regex: keyword, $options: "i" },
+          description: { $regex: keyword, $options: "i" },
+        },
+      ];
     }
-
 
     const PAGE_SIZE = 6;
     const pageNumber = req.params.page ? req.params.page : 1;
@@ -302,14 +300,13 @@ export const productPageController = async (req, res) => {
       .limit(PAGE_SIZE)
       .sort({ createdAt: -1 });
 
-      console.log(products)
+    console.log(products);
 
     res.status(200).send({
       success: true,
       message: "Product page",
       products,
     });
-
   } catch (error) {
     console.log(error);
     res.status(500).send({
@@ -322,73 +319,98 @@ export const productPageController = async (req, res) => {
 // search product controller
 
 export const searchProductController = async (req, res) => {
-
   try {
-
     const { keyword } = req.params;
 
-    const products = await productModel.find({ 
-      $or: [
-        {
-          name: {$regex: keyword, $options: 'i'},
-          description: {$regex: keyword, $options: 'i'},
-        }
-      ]
-     }).select("-photo").populate("category");
+    const products = await productModel
+      .find({
+        $or: [
+          {
+            name: { $regex: keyword, $options: "i" },
+            description: { $regex: keyword, $options: "i" },
+          },
+        ],
+      })
+      .select("-photo")
+      .populate("category");
 
     res.status(200).send({
       success: true,
       message: "Search product",
-      products
+      products,
     });
-
-    
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
       message: "Error in searching product",
-      error
+      error,
     });
-
   }
-}
+};
 
 // product filter controller
 
 export const productFilterController = async (req, res) => {
-
   try {
-
-    const {checked, radio, keyword} = req.body;
+    const { checked, radio, keyword } = req.body;
 
     let arg = {};
 
-    if(checked.length > 0){
+    if (checked.length > 0) {
       arg.category = checked;
     }
 
-    if(radio.length){
+    if (radio.length) {
       arg.price = {
         $gte: radio[0],
-        $lte: radio[1]
-      }
+        $lte: radio[1],
+      };
     }
 
-    const products = await productModel.find(arg).select("-photo").populate("category");
+    const products = await productModel
+      .find(arg)
+      .select("-photo")
+      .populate("category");
     res.status(200).send({
       success: true,
       message: "Filter product",
-      products
+      products,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in filtering product",
+      error,
+    });
+  }
+};
+
+// Similar product controller
+
+export const similarProductController = async (req, res) => {
+  try {
+    const { pid, cid } = req.params;
+
+    const products = await productModel
+      .find({ _id: { $ne: pid }, category: cid })
+      .select("-photo")
+      .populate("category")
+      .limit(3);
+
+    res.status(200).send({
+      success: true,
+      message: "Similar product",
+      products,
     });
     
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error in filtering product",
-      error
+      message: "Error in getting similar product",
+      error,
     });
-
   }
-}
+};

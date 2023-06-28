@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout/layout.js";
 import { useAuth } from "../context/auth.js";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link , useNavigate}  from "react-router-dom";
 import { Checkbox, Radio } from "antd";
 import { Prices } from "../components/prices.js";
 import SearchInput from "../components/Forms/SearchInput.js";
@@ -15,8 +15,10 @@ export default function HomePage() {
   const [products, setProducts] = useState({
     priceRange: [],
     productsArr: [],
-    search: ""
+    search: "",
   });
+
+  const navigate = useNavigate();
 
   // Category filter state
   const [categories, setCategories] = useState([]);
@@ -58,12 +60,12 @@ export default function HomePage() {
         console.log(error);
       }
     }, 300);
-  }
+  };
 
-  useEffect(() => { 
-    loadMore(); 
+  useEffect(() => {
+    loadMore();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, checked, products.priceRange, products.search])
+  }, [page, checked, products.priceRange, products.search]);
 
   //handle filter by price
   const handleFilterByPrice = (value) => {
@@ -88,23 +90,20 @@ export default function HomePage() {
     setChecked(all);
   };
 
-// get Filtered products
+  // get Filtered products
 
-const getFilteredProducts = async () => {
+  const getFilteredProducts = async () => {
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API}/api/v1/product/product-filter`,
+        { checked, radio: products.priceRange }
+      );
 
-  try {
-
-    const res = await axios.post(`${process.env.REACT_APP_API}/api/v1/product/product-filter`, {checked, radio: products.priceRange});
-
-    setProducts({...products, productsArr: res.data.products})
-    
-  } catch (error) {
-
-    console.log(error)
-    
-  }
-}
-
+      setProducts({ ...products, productsArr: res.data.products });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   //get all categories
   const getCategories = async () => {
@@ -129,12 +128,12 @@ const getFilteredProducts = async () => {
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_API}/api/v1/product/product-list/${page}`,
-        {checked, radio: products.priceRange}
+        { checked, radio: products.priceRange }
       );
 
-      console.log(res.data.products)
+      console.log(res.data.products);
 
-      setProducts({...products, productsArr: res.data.products})
+      setProducts({ ...products, productsArr: res.data.products });
     } catch (error) {
       console.log(error);
     }
@@ -146,8 +145,8 @@ const getFilteredProducts = async () => {
 
   // handle search
   const handleSearch = async (keyword) => {
-      setProducts({...products, search: keyword})    
-  }
+    setProducts({ ...products, search: keyword });
+  };
 
   return (
     <Layout title={"All Products - Best offer"}>
@@ -193,46 +192,55 @@ const getFilteredProducts = async () => {
         </div>
         <div className="col-md-10" style={{ padding: "5% 10%" }}>
           <h1>All products list</h1>
-          <SearchInput handleSearch={handleSearch} value={products.search}/>
+          <SearchInput handleSearch={handleSearch} value={products.search} />
           {/* create cards for showing products */}
           <div className="row">
-            {products?.productsArr?.map((product) =>
-                <Link
-                  to={`/`}
-                  key={product._id}
-                  className="text-decoration-none col-md-4 d-flex justify-content-center"
-                >
-                  <div className="shadow card m-3 " style={{ width: "18rem" }}>
-                    <img
-                      src={`${process.env.REACT_APP_API}/api/v1/product/get-product-photo/${product._id}`}
-                      className="card-img-top shadow"
-                      alt="..."
-                    />
-                    <div className="card-body">
-                      <h5 className="card-title">{product.name}</h5>
-                      <p className="card-text">
-                        {product.description.substring(0, 30)}...
-                      </p>
-                      <p className="card-text">${product.price}</p>
-                      <p className="card-text">{product.category.name}</p>
-                      <div className="d-flex align-items-center justify-content-center gap-3">
-                        <button className="btn btn-dark btn-sm">
-                          More Details
-                        </button>
-                        <button className="btn btn-secondary btn-sm">
-                          Add to Cart
-                        </button>
-                      </div>
+            {products?.productsArr?.map((product) => (
+              <Link
+                to={`/`}
+                key={product._id}
+                className="text-decoration-none col-md-4 d-flex justify-content-center"
+              >
+                <div className="shadow card m-3 " style={{ width: "18rem" }}>
+                  <img
+                    src={`${process.env.REACT_APP_API}/api/v1/product/get-product-photo/${product._id}`}
+                    className="card-img-top shadow"
+                    alt="..."
+                  />
+                  <div className="card-body">
+                    <h5 className="card-title">{product.name}</h5>
+                    <p className="card-text">
+                      {product.description.substring(0, 30)}...
+                    </p>
+                    <p className="card-text">${product.price}</p>
+                    <p className="card-text">{product.category.name}</p>
+                    <div className="d-flex align-items-center justify-content-center gap-3">
+                      <button 
+                        className="btn btn-dark btn-sm" 
+                        onClick={(e) => {
+                          e.preventDefault();
+                          navigate(`/product/${product.slug}`)
+                        }}
+                      >
+                        More Details
+                      </button>
+                      <button className="btn btn-secondary btn-sm">
+                        Add to Cart
+                      </button>
                     </div>
                   </div>
-                </Link>
-              ) 
-            }
+                </div>
+              </Link>
+            ))}
             <div>
-              <button className="btn btn-dark" disabled={page <= 1} onClick={ (e) => {
-                e.preventDefault();
-                setPage(page - 1);
-              }}>
+              <button
+                className="btn btn-dark"
+                disabled={page <= 1}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setPage(page - 1);
+                }}
+              >
                 Prev
               </button>
               <button

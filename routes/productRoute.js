@@ -1,5 +1,5 @@
 import express from "express";
-import { UpdateProductController, createProductController, deleteProductController, getAllProductsController, getProductPhotoController, getSingleProductsController, productCountController, productFilterController, productPageController, searchProductController } from "../controllers/productController.js";
+import { UpdateProductController, createProductController, deleteProductController, getAllProductsController, getProductPhotoController, getSingleProductsController, productCountController, productFilterController, productPageController, searchProductController, similarProductController } from "../controllers/productController.js";
 import ExpressFormidable from "express-formidable";
 import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
 
@@ -48,6 +48,9 @@ router.get("/search-product/:keyword", searchProductController);
 
 // fitler product || method: get
 router.post("/filter-product", productFilterController);
+
+// Similar product || method: get
+router.get("/similar-product/:pid/:cid", similarProductController);
 
 
 export default router;
