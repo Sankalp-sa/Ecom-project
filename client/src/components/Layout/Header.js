@@ -6,9 +6,16 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import useCategory from "../../hooks/useCategory";
 
+import { Badge } from "antd";
+
+import { useCart } from "../../context/cart";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+
 export default function Header() {
   const { auth, setAuth } = useAuth();
   const categories = useCategory();
+
+  const { cart, setCart } = useCart();
 
   console.log(categories);
 
@@ -68,11 +75,14 @@ export default function Header() {
                     </NavLink>
                   </li>
                   {categories?.map((category) => (
-                  <li>
-                    <NavLink className="dropdown-item" to={`/categories/${category?.name}`}>
-                      {category?.name}
-                    </NavLink>
-                  </li>
+                    <li>
+                      <NavLink
+                        className="dropdown-item"
+                        to={`/categories/${category?.name}`}
+                      >
+                        {category?.name}
+                      </NavLink>
+                    </li>
                   ))}
                 </ul>
               </li>
@@ -134,10 +144,16 @@ export default function Header() {
                   </li>
                 </>
               )}
-              <li className="nav-item">
-                <NavLink to="/cart" className="nav-link" aria-current="page">
-                  Cart (0)
-                </NavLink>
+              <li className="nav-item mx-3">
+                <Badge
+                  count={cart?.length}
+                  style={{ backgroundColor: "#52c41a", margin: "9px 9px" }}
+                  showZero
+                >
+                  <NavLink to="/cart" className="nav-link" aria-current="page">
+                    <ShoppingCartIcon fontSize="large"/> 
+                  </NavLink>
+                </Badge>
               </li>
             </ul>
           </div>

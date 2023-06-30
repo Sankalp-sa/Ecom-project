@@ -1,5 +1,17 @@
 import express from "express";
-import { UpdateProductController, createProductController, deleteProductController, getAllProductsController, getProductPhotoController, getSingleProductsController, productCountController, productFilterController, productPageController, searchProductController, similarProductController } from "../controllers/productController.js";
+import {
+  UpdateProductController,
+  createProductController,
+  deleteProductController,
+  getAllProductsController,
+  getProductPhotoController,
+  getSingleProductsController,
+  productCountController,
+  productFilterController,
+  productPageController,
+  searchProductController,
+  similarProductController,
+} from "../controllers/productController.js";
 import ExpressFormidable from "express-formidable";
 import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
 
@@ -16,14 +28,14 @@ router.post(
   createProductController
 );
 
-// Update product || method: PUT  
+// Update product || method: PUT
 router.put(
-    "/update-product/:pid",
-    requireSignIn,
-    isAdmin,
-    ExpressFormidable(),
-    UpdateProductController
-  );
+  "/update-product/:pid",
+  requireSignIn,
+  isAdmin,
+  ExpressFormidable(),
+  UpdateProductController
+);
 
 // get all products || method: GET
 router.get("/get-all-products", getAllProductsController);
@@ -35,7 +47,12 @@ router.get("/get-single-product/:slug", getSingleProductsController);
 router.get("/get-product-photo/:pid", getProductPhotoController);
 
 // delete product || method: DELETE
-router.delete("/delete-product/:pid", requireSignIn, isAdmin, deleteProductController);
+router.delete(
+  "/delete-product/:pid",
+  requireSignIn,
+  isAdmin,
+  deleteProductController
+);
 
 // product count || method: GET
 router.get("/product-count", productCountController);
@@ -51,6 +68,5 @@ router.post("/filter-product", productFilterController);
 
 // Similar product || method: get
 router.get("/similar-product/:pid/:cid", similarProductController);
-
 
 export default router;

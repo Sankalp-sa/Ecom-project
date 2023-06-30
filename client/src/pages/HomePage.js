@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout/layout.js";
 import { useAuth } from "../context/auth.js";
 import axios from "axios";
-import { Link , useNavigate}  from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Checkbox, Radio } from "antd";
 import { Prices } from "../components/prices.js";
 import SearchInput from "../components/Forms/SearchInput.js";
+import { useCart } from "../context/cart.js";
+import { toast } from "react-hot-toast";
 
 let timeoutId = null;
 
@@ -26,6 +28,11 @@ export default function HomePage() {
 
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
+
+  // cart state
+  const { cart, setCart } = useCart();
+
+  const max = 1000000;
 
   // get Total cnt of products
   const getTotal = async () => {
@@ -59,7 +66,7 @@ export default function HomePage() {
       } catch (error) {
         console.log(error);
       }
-    }, 300);
+    }, 200);
   };
 
   useEffect(() => {
@@ -71,8 +78,8 @@ export default function HomePage() {
   const handleFilterByPrice = (value) => {
     if (value !== 0) {
       setProducts({ ...products, priceRange: value });
-    } else {
-      const max = Math.max(...products.productsArr.map((p) => p.price));
+    }
+    else {
       setProducts({ ...products, priceRange: [0, max] });
     }
   };
@@ -150,15 +157,18 @@ export default function HomePage() {
 
   return (
     <Layout title={"All Products - Best offer"}>
-      <div className="row">
-        <div className="col-md-2" style={{ padding: "2% 2%" }}>
+      <div className="row w-100">
+        <div
+          className="col-md-2 bg-danger text-light"
+          style={{ padding: "5% 2%" }}
+        >
           {/* Category filter */}
-          <h4 className="text-center">Filters By Category</h4>
-          <div className="d-flex flex-column ms-3">
+          <h4 className="text-center mb-3">Filters By Category</h4>
+          <div className="d-flex flex-column ms-3 ps-4">
             {categories?.map((category) => (
               <Checkbox
                 key={category._id}
-                className="pb-2"
+                className="pb-2 text-light"
                 onChange={(e) =>
                   handleFilterByCategory(e.target.checked, category._id)
                 }
@@ -168,15 +178,19 @@ export default function HomePage() {
             ))}
           </div>
           {/* Price fitler */}
-          <h4 className="text-center">Filters By Price</h4>
-          <div className="d-flex flex-column ms-3">
+          <h4 className="text-center my-3 ps-3 pt-5  ">Filters By Price</h4>
+          <div className="d-flex flex-column ms-3 ps-4">
             <Radio.Group onChange={(e) => handleFilterByPrice(e.target.value)}>
               <div key={0}>
-                <Radio value={0}>All</Radio>
+                <Radio value={0} className="text-white mb-2">
+                  All
+                </Radio>
               </div>
               {Prices?.map((p) => (
                 <div key={p._id}>
-                  <Radio value={p.array}>{p.name}</Radio>
+                  <Radio value={p.array} className="text-white mb-2">
+                    {p.name}
+                  </Radio>
                 </div>
               ))}
             </Radio.Group>
@@ -199,9 +213,9 @@ export default function HomePage() {
               <Link
                 to={`/`}
                 key={product._id}
-                className="text-decoration-none col-md-4 d-flex justify-content-center"
+                className="text-decoration-none col-md-4 d-flex justify-content-center py-5"
               >
-                <div className="shadow card m-3 " style={{ width: "18rem" }}>
+                <div className="shadow card" style={{ width: "20rem" }}>
                   <img
                     src={`${process.env.REACT_APP_API}/api/v1/product/get-product-photo/${product._id}`}
                     className="card-img-top shadow"
@@ -212,19 +226,34 @@ export default function HomePage() {
                     <p className="card-text">
                       {product.description.substring(0, 30)}...
                     </p>
-                    <p className="card-text">${product.price}</p>
+                    <p className="fs-1 mb-2">${product.price}</p>
                     <p className="card-text">{product.category.name}</p>
                     <div className="d-flex align-items-center justify-content-center gap-3">
-                      <button 
-                        className="btn btn-dark btn-sm" 
+                      <button
+                        className="btn btn-dark btn-sm"
                         onClick={(e) => {
                           e.preventDefault();
-                          navigate(`/product/${product.slug}`)
+                          navigate(`/product/${product.slug}`);
                         }}
                       >
                         More Details
                       </button>
-                      <button className="btn btn-secondary btn-sm">
+                      <button
+                        className="btn btn-secondary btn-sm"
+                        onClick={() => {
+                          if (auth && auth.token) {
+                            setCart([...cart, product]);
+                            localStorage.setItem(
+                              "cart",
+                              JSON.stringify([...cart, product])
+                            );
+                            toast.success(`${product.name} added to cart`);
+                          } else {
+                            toast.error("Please login to add to cart");
+                            navigate("/login"); 
+                          }
+                        }}
+                      >
                         Add to Cart
                       </button>
                     </div>

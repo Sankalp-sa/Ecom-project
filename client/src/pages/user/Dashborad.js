@@ -9,18 +9,19 @@ export default function Dashborad() {
 
   return (
     <Layout>
-      <div className="container-fluid m-3 p-3">
+      <div className="container-fluid">
         <div className="row">
-          <div className="col-md-3">
+          <div className="col-md-2 bg-danger text-light" style={{padding: "5% 2%"}}>
             <UserMenu />
           </div>
-          <div className="col-md-9">
-            <div className="card">
+          <div className="col-md-9" style={{padding: "5% 15%"}}>
+            <div className="card" style={{padding: "5% 5%"}}>
               <div className="card-body">
-                <h5 className="card-title">User Details</h5>
+                <h5 className="card-title fs-1 mb-3">User Details</h5>
                 <p className="card-text">Name: {auth?.user?.name}</p>
                 <p className="card-text">Email: {auth?.user?.email}</p>
                 <p className="card-text">Address: {auth?.user?.address}</p>
+                <p className="card-text">Phone: {auth?.user?.phone}</p>                
               </div>
             </div>
           </div>

@@ -262,8 +262,8 @@ export const productPageController = async (req, res) => {
 
     let arg = {};
 
-    console.log(checked);
-    console.log(radio);
+    console.log("checked "+checked);
+    console.log("radio" +radio);
 
     if (checked.length > 0) {
       arg.category = checked;
