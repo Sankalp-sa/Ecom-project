@@ -1,11 +1,13 @@
 import express from "express";
 import {
   UpdateProductController,
+  braintreeTokenController,
   createProductController,
   deleteProductController,
   getAllProductsController,
   getProductPhotoController,
   getSingleProductsController,
+  paymentController,
   productCountController,
   productFilterController,
   productPageController,
@@ -14,6 +16,7 @@ import {
 } from "../controllers/productController.js";
 import ExpressFormidable from "express-formidable";
 import { isAdmin, requireSignIn } from "../middlewares/authMiddleware.js";
+import braintree from "braintree";
 
 const router = express.Router();
 
@@ -68,5 +71,12 @@ router.post("/filter-product", productFilterController);
 
 // Similar product || method: get
 router.get("/similar-product/:pid/:cid", similarProductController);
+
+// payment gateway route
+// token
+router.get("/braintree/token", requireSignIn, braintreeTokenController);
+
+// payment
+router.post("/braintree/payment", requireSignIn, paymentController);
 
 export default router;

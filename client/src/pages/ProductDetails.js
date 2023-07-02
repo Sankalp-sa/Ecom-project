@@ -2,12 +2,22 @@ import React, {useState, useEffect} from 'react'
 import Layout from '../components/Layout/layout'
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import { useAuth } from '../context/auth';
+import { useCart } from '../context/cart';
+import { toast } from 'react-hot-toast';
+
+import { useNavigate } from 'react-router-dom';
 
 export default function ProductDetails() {
   const params = useParams();
   const [product, setProduct] = useState({}); // product is an object
 
   const [relatedProducts, setRelatedProducts] = useState([]);
+
+  const { auth } = useAuth();
+  const { cart, setCart } = useCart();
+
+  const navigate = useNavigate();
 
  const getProducts = async () => {
 
@@ -68,7 +78,21 @@ export default function ProductDetails() {
               {product.category?.name}
             </p>
             <div className="d-flex align-items-start justify-content-start gap-3">
-              <button className="btn btn-secondary">
+              <button className="btn btn-secondary"
+                onClick={() => {
+                  if (auth && auth.token) {
+                    setCart([...cart, product]);
+                    localStorage.setItem(
+                      "cart",
+                      JSON.stringify([...cart, product])
+                    );
+                    toast.success(`${product.name} added to cart`);
+                  } else {
+                    toast.error("Please login to add to cart");
+                    navigate("/login"); 
+                  }
+                }}
+              >
                 Add to Cart
               </button>
             </div>
@@ -97,7 +121,21 @@ export default function ProductDetails() {
                         {product.category?.name}
                       </p>
                       <div className="d-flex align-items-start justify-content-start gap-3">
-                        <button className="btn btn-secondary">
+                        <button className="btn btn-secondary"
+                        onClick={() => {
+                          if (auth && auth.token) {
+                            setCart([...cart, product]);
+                            localStorage.setItem(
+                              "cart",
+                              JSON.stringify([...cart, product])
+                            );
+                            toast.success(`${product.name} added to cart`);
+                          } else {
+                            toast.error("Please login to add to cart");
+                            navigate("/login"); 
+                          }
+                        }}
+                        >
                           Add to Cart
                         </button>
                       </div>
