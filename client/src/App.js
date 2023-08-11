@@ -21,13 +21,14 @@ import AdminProduct from "./pages/admin/AdminProduct";
 import UpdateProduct from "./pages/admin/UpdateProduct";
 import ProductDetails from "./pages/ProductDetails";
 import CartPage from "./pages/CartPage";
+import LandingPage from "./pages/LandingPage";
 
 function App() {
   return (
     <>
       <Routes>
         <Route path="/home" element={<HomePage />} />
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/product/:slug" element={<ProductDetails />} />
         <Route path="/dashboard" element={<PrivateRoute />}>

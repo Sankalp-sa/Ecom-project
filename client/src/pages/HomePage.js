@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Layout from "../components/Layout/layout.js";
 import { useAuth } from "../context/auth.js";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,7 +6,7 @@ import { Checkbox, Radio } from "antd";
 import { Prices } from "../components/prices.js";
 import SearchInput from "../components/Forms/SearchInput.js";
 import { useCart } from "../context/cart.js";
-import { toast } from "react-hot-toast";
+import toast from "react-hot-toast";
 
 let timeoutId = null;
 
@@ -49,7 +48,7 @@ export default function HomePage() {
 
   useEffect(() => {
     getTotal();
-  }, []);
+  }, [page, checked, products.priceRange, products.search]);
 
   // londmore pages
 
@@ -78,8 +77,7 @@ export default function HomePage() {
   const handleFilterByPrice = (value) => {
     if (value !== 0) {
       setProducts({ ...products, priceRange: value });
-    }
-    else {
+    } else {
       setProducts({ ...products, priceRange: [0, max] });
     }
   };
@@ -156,10 +154,10 @@ export default function HomePage() {
   };
 
   return (
-    <Layout title={"All Products - Best offer"}>
-      <div className="row w-100">
+    <div>
+      <div className="row bg-warning text-white landing-text" >
         <div
-          className="col-md-2 bg-danger text-light"
+          className="col-md-2 border-end border-light-subtle "
           style={{ padding: "5% 2%" }}
         >
           {/* Category filter */}
@@ -168,7 +166,7 @@ export default function HomePage() {
             {categories?.map((category) => (
               <Checkbox
                 key={category._id}
-                className="pb-2 text-light"
+                className="pb-2 text-white"
                 onChange={(e) =>
                   handleFilterByCategory(e.target.checked, category._id)
                 }
@@ -182,13 +180,13 @@ export default function HomePage() {
           <div className="d-flex flex-column ms-3 ps-4">
             <Radio.Group onChange={(e) => handleFilterByPrice(e.target.value)}>
               <div key={0}>
-                <Radio value={0} className="text-white mb-2">
+                <Radio value={0} className="mb-2 text-white">
                   All
                 </Radio>
               </div>
               {Prices?.map((p) => (
                 <div key={p._id}>
-                  <Radio value={p.array} className="text-white mb-2">
+                  <Radio value={p.array} className="mb-2 text-white">
                     {p.name}
                   </Radio>
                 </div>
@@ -197,7 +195,7 @@ export default function HomePage() {
           </div>
           <div className="d-flex flex-column ms-3 p-3">
             <button
-              className="btn btn-dark btn-sm"
+              className="btn btn-outline-dark btn-sm"
               onClick={() => window.location.reload()}
             >
               Reset Filters
@@ -213,14 +211,16 @@ export default function HomePage() {
               <Link
                 to={`/`}
                 key={product._id}
-                className="text-decoration-none col-md-4 d-flex justify-content-center py-5"
+                className="text-decoration-none col-lg-4 d-flex justify-content-center py-5"
               >
-                <div className="shadow card" style={{ width: "20rem" }}>
+                <div className="card" style={{width: "20rem"}}>
+                  <div className="card-img-div" >
                   <img
                     src={`${process.env.REACT_APP_API}/api/v1/product/get-product-photo/${product._id}`}
                     className="card-img-top shadow"
                     alt="..."
                   />
+                  </div>
                   <div className="card-body">
                     <h5 className="card-title">{product.name}</h5>
                     <p className="card-text">
@@ -228,7 +228,7 @@ export default function HomePage() {
                     </p>
                     <p className="fs-1 mb-2">${product.price}</p>
                     <p className="card-text">{product.category.name}</p>
-                    <div className="d-flex align-items-center justify-content-center gap-3">
+                    <div className="d-flex align-items-start justify-content-start gap-3 py-3">
                       <button
                         className="btn btn-dark btn-sm"
                         onClick={(e) => {
@@ -239,9 +239,9 @@ export default function HomePage() {
                         More Details
                       </button>
                       <button
-                        className="btn btn-secondary btn-sm"
+                        className="btn btn-warning btn-sm"
                         onClick={() => {
-                          if (auth && auth.token) {
+                          if (cart.find((p) => p._id === product._id) === undefined) {
                             setCart([...cart, product]);
                             localStorage.setItem(
                               "cart",
@@ -249,8 +249,7 @@ export default function HomePage() {
                             );
                             toast.success(`${product.name} added to cart`);
                           } else {
-                            toast.error("Please login to add to cart");
-                            navigate("/login"); 
+                            toast.error(`${product.name} already in cart`);
                           }
                         }}
                       >
@@ -261,31 +260,31 @@ export default function HomePage() {
                 </div>
               </Link>
             ))}
-            <div>
+            <center>
               <button
-                className="btn btn-dark"
+                className="btn btn-dark btn-lg rounded-0 fs-3 rounded-start-4 fw-bold px-4"
                 disabled={page <= 1}
                 onClick={(e) => {
                   e.preventDefault();
                   setPage(page - 1);
                 }}
               >
-                Prev
+                &lt;
               </button>
               <button
-                className=" btn btn-secondary"
-                disabled={page + 1 > Math.ceil(total / 6)}
+                className="btn btn-dark btn-lg rounded-0 fs-3 rounded-end-4 fw-bold px-4"
+                disabled={page + 1 > Math.ceil(total / 3)}
                 onClick={(e) => {
                   e.preventDefault();
                   setPage(page + 1);
                 }}
               >
-                Next
+                &gt;
               </button>
-            </div>
+            </center>
           </div>
         </div>
       </div>
-    </Layout>
+    </div>
   );
 }

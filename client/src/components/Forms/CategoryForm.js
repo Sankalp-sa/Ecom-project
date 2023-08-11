@@ -21,6 +21,12 @@ export default function CategoryForm({
             {icon}
           </button>
         </div>
+        <div className="input-group mb-3">
+          <label className="input-group-text" htmlFor="inputGroupFile01">
+            Upload
+          </label>
+          <input type="file" className="form-control" id="inputGroupFile01" />
+        </div>
       </form>
     </>
   );

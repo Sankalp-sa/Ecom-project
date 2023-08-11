@@ -9,7 +9,7 @@ import useCategory from "../../hooks/useCategory";
 import { Badge } from "antd";
 
 import { useCart } from "../../context/cart";
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 
 export default function Header() {
   const { auth, setAuth } = useAuth();
@@ -35,10 +35,14 @@ export default function Header() {
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary">
+      <nav className="navbar navbar-expand-lg">
         <div className="container-fluid">
-          <Link to="/" className="navbar-brand fs-3">
-            <GiShoppingBag className="mb-2 text-danger fw-bold" /> Shop it
+          <Link to="/" className="navbar-brand fs-1">
+            <GiShoppingBag
+              className="mb-2 fw-bold"
+              style={{ color: "#ffa000" }}
+            />{" "}
+            Shop it
           </Link>
           <button
             className="navbar-toggler"
@@ -52,7 +56,10 @@ export default function Header() {
             <span className="navbar-toggler-icon" />
           </button>
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+            <ul
+              className="navbar-nav ms-auto mb-2 mb-lg-0"
+              style={{ gap: "4rem" }}
+            >
               <li className="nav-item">
                 <Link to="/" className="nav-link" aria-current="page">
                   Home
@@ -147,11 +154,27 @@ export default function Header() {
               <li className="nav-item mx-3">
                 <Badge
                   count={cart?.length}
-                  style={{ backgroundColor: "#52c41a", margin: "9px 9px" }}
+                  style={{ margin: "9px 9px", backgroundColor: "#ffa000" }}
                   showZero
                 >
                   <NavLink to="/cart" className="nav-link" aria-current="page">
-                    <ShoppingCartIcon fontSize="large"/> 
+                    <ShoppingCartIcon fontSize="large" />
+                  </NavLink>
+                </Badge>
+              </li>
+              <li className="nav-item mx-3">
+                <Badge
+                  count={cart?.length}
+                  style={{ margin: "9px 9px", backgroundColor: "#ffa000" }}
+                  showZero
+                >
+                  <NavLink
+                    className="nav-link"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasWithBothOptions"
+                    aria-controls="offcanvasWithBothOptions"
+                  >
+                    <ShoppingCartIcon fontSize="large" />
                   </NavLink>
                 </Badge>
               </li>
@@ -159,6 +182,30 @@ export default function Header() {
           </div>
         </div>
       </nav>
+      <div
+        class="offcanvas offcanvas-end"
+        data-bs-scroll="true"
+        tabindex="-1"
+        id="offcanvasWithBothOptions"
+        aria-labelledby="offcanvasWithBothOptionsLabel"
+      >
+        <div class="offcanvas-header">
+          <h5 class="offcanvas-title" id="offcanvasWithBothOptionsLabel">
+            Cart items
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="offcanvas-body">
+          <p>
+            Try scrolling the rest of the page to see this option in action.
+          </p>
+        </div>
+      </div>
     </>
   );
 }

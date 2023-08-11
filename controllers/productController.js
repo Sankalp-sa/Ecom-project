@@ -6,6 +6,7 @@ import fs from "fs";
 import braintree from "braintree";
 import orderModel from "../modules/orderModel.js";
 import dotenv from "dotenv";
+import discountModel from "../modules/discountModel.js";
 
 dotenv.config();
 
@@ -301,7 +302,7 @@ export const productPageController = async (req, res) => {
       ];
     }
 
-    const PAGE_SIZE = 6;
+    const PAGE_SIZE = 3;
     const pageNumber = req.params.page ? req.params.page : 1;
 
     const skipAmount = (pageNumber - 1) * PAGE_SIZE;
@@ -486,3 +487,60 @@ export const paymentController = async (req, res) => {
     console.log(error);
   }
 };
+
+// Add discount controller
+
+export const addDiscountController = async (req, res) => {
+
+  const {pid} = req.params;
+
+  const {discount} = req.body;
+
+  try{
+
+    const discountProduct = new discountModel({
+      product: pid,
+      discount
+    }).save();
+
+    res.status(201).send({
+      success: true,
+      message: "Discount added successfully",
+      discountProduct
+    })
+
+  }
+  catch{
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in adding discount",
+      error,
+    });
+  }
+}
+
+// get all discount product controller
+
+export const getAllDiscountProductController = async (req, res) => {
+
+  try{
+
+    const discountProduct = await discountModel.find({}).populate('product').populate("product.category");
+
+    res.status(200).send({
+      success: true,
+      message: "All discount product",
+      discountProduct
+    })
+
+  }
+  catch{
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in getting discount product",
+      error,
+    });
+  }
+}

@@ -1,9 +1,11 @@
 import express from "express";
 import {
   UpdateProductController,
+  addDiscountController,
   braintreeTokenController,
   createProductController,
   deleteProductController,
+  getAllDiscountProductController,
   getAllProductsController,
   getProductPhotoController,
   getSingleProductsController,
@@ -78,5 +80,11 @@ router.get("/braintree/token", requireSignIn, braintreeTokenController);
 
 // payment
 router.post("/braintree/payment", requireSignIn, paymentController);
+
+// add discount route
+router.post("/add-discount/:pid", requireSignIn, isAdmin, addDiscountController);
+
+// get discount products
+router.get("/discount-products", getAllDiscountProductController);
 
 export default router;
