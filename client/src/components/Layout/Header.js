@@ -33,6 +33,16 @@ export default function Header() {
     navigate("/login");
   }
 
+  const removeCartItem = (id) => {
+    try {
+      const newCart = cart.filter((item) => item._id !== id);
+      localStorage.setItem("cart", JSON.stringify(newCart));
+      setCart(newCart);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <>
       <nav className="navbar navbar-expand-lg">
@@ -157,17 +167,6 @@ export default function Header() {
                   style={{ margin: "9px 9px", backgroundColor: "#ffa000" }}
                   showZero
                 >
-                  <NavLink to="/cart" className="nav-link" aria-current="page">
-                    <ShoppingCartIcon fontSize="large" />
-                  </NavLink>
-                </Badge>
-              </li>
-              <li className="nav-item mx-3">
-                <Badge
-                  count={cart?.length}
-                  style={{ margin: "9px 9px", backgroundColor: "#ffa000" }}
-                  showZero
-                >
                   <NavLink
                     className="nav-link"
                     data-bs-toggle="offcanvas"
@@ -201,9 +200,47 @@ export default function Header() {
           ></button>
         </div>
         <div class="offcanvas-body">
-          <p>
-            Try scrolling the rest of the page to see this option in action.
-          </p>
+          {auth?.user ? (
+            <div className="row">
+              {cart?.map((item) => (
+                <div key={item._id} className="col-md-12 mb-3">
+                  <div className="card" style={{ maxWidth: 800 }}>
+                    <div className="row g-0">
+                      <div className="col-4 border border-light-subtle">
+                        <img
+                          src={`${process.env.REACT_APP_API}/api/v1/product/get-product-photo/${item._id}`}
+                          className="img-fluid rounded-start"
+                          alt="..."
+                        />
+                      </div>
+                      <div className="col-8">
+                        <div className="card-body">
+                          <h5 className="card-title">{item.name}</h5>
+                          <p className="fs-1 mb-3">${item.price}</p>
+                          <button className="btn btn-sm btn-dark me-3">
+                            More Details
+                          </button>
+                          <button
+                            className="btn btn-sm btn-danger"
+                            onClick={() => removeCartItem(item._id)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="mb-3">
+              <h3>Please login to use Cart</h3>
+            </div>
+          )}
+          <div>
+            <button className="btn btn-dark w-25 fixed-bottom" id="checkoutbtn" onClick={() => navigate("/cart")}>Checkout</button>
+          </div>
         </div>
       </div>
     </>
